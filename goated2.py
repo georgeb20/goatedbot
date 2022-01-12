@@ -1,6 +1,6 @@
-from asyncio.windows_events import NULL
 import discord
 import time
+import datetime
 from discord.errors import Forbidden
 from discord.ext import commands
 from discord.utils import get
@@ -91,17 +91,22 @@ async def goated(ctx):
     async for user in ctx.guild.fetch_members(limit=None):
         if member in user.roles:
             member = discord.utils.get(ctx.guild.roles,name=role_name)
-            await ctx.send(f'{user} was goated for {time.strftime("%H:%M:%S",time.gmtime(change))}')
+            changef=datetime.timedelta(seconds=int(change))
+            await ctx.send(f'{user} was goated for {changef}')
             await user.remove_roles(member)
-
+            sid=ctx.message.guild.id
             def write_json(data,filename="db.json"):
                 with open(filename,"w") as f:
                     json.dump(data,f,indent=4)
                     f.close()
 
             with open("db.json") as json_file:
-                data = json.load(json_file)
-                temp = data["user"]
+                data_all = json.load(json_file)
+                for i in range(len(data_all["serverid"])):
+                    if data_all["serverid"][i]["sid"]==sid:
+                        temp = data_all["serverid"][i]["user"]
+
+
                 flag = 0
                 for i in range(len(temp)):
                     if user.id == temp[i]["id"]:
@@ -111,8 +116,7 @@ async def goated(ctx):
                     y = {"id": user.id, "seconds": change}
                     temp.append(y)
 
-
-            write_json(data)
+            write_json(data_all)
             break
 
 
@@ -130,8 +134,14 @@ async def scoreboard(ctx):
     
     # returns JSON object as
     # a dictionary
-    data = json.load(f)
+    data_all = json.load(f)
     f.close()
+
+    sid = ctx.message.guild.id
+    for i in range(len(data_all["serverid"])):
+        if data_all["serverid"][i]["sid"]==sid:
+            data = data_all["serverid"][i]
+
     def sort_by_key(list):
         return list['seconds']
     
@@ -144,14 +154,14 @@ async def scoreboard(ctx):
     name4=await client.fetch_user(sorted_version[4]["id"])
 
 
-    time0=sorted_version[0]["seconds"]
-    time1=sorted_version[1]["seconds"]
-    time2=sorted_version[2]["seconds"]
-    time3=sorted_version[3]["seconds"]
-    time4=sorted_version[4]["seconds"]
+    time0=datetime.timedelta(seconds=int(sorted_version[0]["seconds"]))
+    time1=datetime.timedelta(seconds=int(sorted_version[1]["seconds"]))
+    time2=datetime.timedelta(seconds=int(sorted_version[2]["seconds"]))
+    time3=datetime.timedelta(seconds=int(sorted_version[3]["seconds"]))
+    time4=datetime.timedelta(seconds=int(sorted_version[4]["seconds"]))
 
 
-    await ctx.send(f'```{name0} is 1st with {time.strftime("%H:%M:%S",time.gmtime(time0))}\n{name1} is 2nd with {time.strftime("%H:%M:%S",time.gmtime(time1))}\n{name2} is 3rd with {time.strftime("%H:%M:%S",time.gmtime(time2))}\n{name3} is 4th with {time.strftime("%H:%M:%S",time.gmtime(time3))}\n{name4} is 5th with {time.strftime("%H:%M:%S",time.gmtime(time4))}```')
+    await ctx.send(f'```{name0} is 1st with {time0}\n{name1} is 2nd with {time1}\n{name2} is 3rd with {time2}\n{name3} is 4th with {time3}\n{name4} is 5th with {time4}```')
 
 
     
@@ -188,7 +198,7 @@ async def tonka(ctx):
 @client.command()
 async def tonkar(ctx):
     user=ctx.author
-    await user.edit(nick=NULL)
+    await user.edit(nick="")
     await ctx.send(f'Nickname was reset to default {user.mention}')
     
 
@@ -220,7 +230,6 @@ async def tonkar(ctx):
 
 
 
-#ODcxMjUzMzEzMjQzNDQ3MzM2.YQYn4A.AwawAiZldfMVq7JBuNmc2d_qIz0
 
  
-client.run('key')  
+client.run('place_client_id_here')  
