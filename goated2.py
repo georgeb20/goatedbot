@@ -111,6 +111,11 @@ async def goated(ctx):
             with open("db.json") as json_file:
                 data_all = json.load(json_file)
             indexs = get_sid(ctx)
+
+            if user.id == data_all["serverid"][indexs]["former_goat"]:
+                await ctx.send(f'{user.mention} former goats need a break')
+                alrdy_goated=1
+                break
             data_all["serverid"][indexs]["a"]=time.time()
 
             data_all["serverid"][indexs]["change"] = data_all["serverid"][indexs]["a"]-data_all["serverid"][indexs]["the_current_time"]
@@ -121,6 +126,7 @@ async def goated(ctx):
 
             await ctx.send(f'{user} was goated for {changef}')
             await user.remove_roles(member)
+
 
             temp = data_all["serverid"][indexs]["user"]
 
@@ -141,6 +147,7 @@ async def goated(ctx):
         pass
     else:
         user2 = ctx.author
+        data_all["serverid"][indexs]["former_goat"]=user2.id
         await ctx.send(f'{user2.mention} is now the goat :goat:')
         role = discord.utils.get(user2.guild.roles,name=role_name)
         await user2.add_roles(role)
