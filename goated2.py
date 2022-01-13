@@ -34,6 +34,8 @@ f = open('db.json')
 data_all = json.load(f)
 for i in data_all["serverid"]:
     i["the_current_time"]=time.time()
+    i["change"]=0
+    i["a"]=0
 write_json(data_all)
 f.close()
 
