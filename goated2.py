@@ -97,8 +97,6 @@ async def on_ready():
 async def goated(ctx):
     global the_current_time
 
-
-
     role_name ='goated'
     alrdy_goated=0
     member = discord.utils.get(ctx.guild.roles,name=role_name)
@@ -114,7 +112,7 @@ async def goated(ctx):
                 data_all = json.load(json_file)
             indexs = get_sid(ctx)
 
-            if user.id == data_all["serverid"][indexs]["former_goat"]:
+            if ctx.author.id == data_all["serverid"][indexs]["former_goat"]:
                 await ctx.send(f'{user.mention} former goats need a break')
                 alrdy_goated=1
                 break
@@ -128,6 +126,7 @@ async def goated(ctx):
 
             await ctx.send(f'{user} was goated for {changef}')
             await user.remove_roles(member)
+            data_all["serverid"][indexs]["former_goat"]=user.id
 
 
             temp = data_all["serverid"][indexs]["user"]
@@ -149,7 +148,6 @@ async def goated(ctx):
         pass
     else:
         user2 = ctx.author
-        data_all["serverid"][indexs]["former_goat"]=user2.id
         await ctx.send(f'{user2.mention} is now the goat :goat:')
         role = discord.utils.get(user2.guild.roles,name=role_name)
         await user2.add_roles(role)
@@ -263,4 +261,4 @@ async def tonkar(ctx):
 
 
  
-client.run('place_client_id_here')  
+client.run('place_client_id')  
