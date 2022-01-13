@@ -8,7 +8,17 @@ import random
 import asyncio
 import json
 
+def write_json(data,filename="db.json"):
+    with open(filename,"w") as f:
+        json.dump(data,f,indent=4)
+        f.close()
 
+def get_sid(ctxx):
+    with open("db.json") as json_file:
+        data_all = json.load(json_file)
+        for i in range(len(data_all["serverid"])):
+            if data_all["serverid"][i]["sid"]==ctxx.message.guild.id:
+                return i
 
 intents = discord.Intents.default()
 intents.members =  True
@@ -20,7 +30,12 @@ client = commands.Bot(command_prefix='!',intents=intents)
 
 #league lists
 # games = ["league of legends","valorant","tft","overcooked","rogue company"]
-the_current_time = time.time()
+f = open('db.json')
+data_all = json.load(f)
+for i in data_all["serverid"]:
+    i["the_current_time"]=time.time()
+write_json(data_all)
+f.close()
 
 #valorant lists
 # roles = ["Controllers","Duelists","Initiators","Sentinels"]
@@ -92,37 +107,32 @@ async def goated(ctx):
                 await ctx.send(f'{user.mention} you are already goated :goat:')
                 alrdy_goated=1
                 break
-            a=time.time()
-
-            change = a-the_current_time
-            
-            the_current_time = a
-            member = discord.utils.get(ctx.guild.roles,name=role_name)
-            changef=datetime.timedelta(seconds=int(change))
-
-            await ctx.send(f'{user} was goated for {changef}')
-            await user.remove_roles(member)
-            sid=ctx.message.guild.id
-            def write_json(data,filename="db.json"):
-                with open(filename,"w") as f:
-                    json.dump(data,f,indent=4)
-                    f.close()
 
             with open("db.json") as json_file:
                 data_all = json.load(json_file)
-                for i in range(len(data_all["serverid"])):
-                    if data_all["serverid"][i]["sid"]==sid:
-                        temp = data_all["serverid"][i]["user"]
+            indexs = get_sid(ctx)
+            data_all["serverid"][indexs]["a"]=time.time()
+
+            data_all["serverid"][indexs]["change"] = data_all["serverid"][indexs]["a"]-data_all["serverid"][indexs]["the_current_time"]
+            
+            data_all["serverid"][indexs]["the_current_time"] = data_all["serverid"][indexs]["a"]
+            member = discord.utils.get(ctx.guild.roles,name=role_name)
+            changef=datetime.timedelta(seconds=int(data_all["serverid"][indexs]["change"]))
+
+            await ctx.send(f'{user} was goated for {changef}')
+            await user.remove_roles(member)
+
+            temp = data_all["serverid"][indexs]["user"]
 
 
-                flag = 0
-                for i in range(len(temp)):
-                    if user.id == temp[i]["id"]:
-                        temp[i]["seconds"] = temp[i]["seconds"]+change
-                        flag = 1
-                if flag == 0:
-                    y = {"id": user.id, "seconds": change}
-                    temp.append(y)
+            flag = 0
+            for i in range(len(temp)):
+                if user.id == temp[i]["id"]:
+                    temp[i]["seconds"] = temp[i]["seconds"]+data_all["serverid"][indexs]["change"]
+                    flag = 1
+            if flag == 0:
+                y = {"id": user.id, "seconds": data_all["serverid"][indexs]["change"]}
+                temp.append(y)
 
             write_json(data_all)
             break
@@ -140,7 +150,7 @@ async def goated(ctx):
 @client.command()
 async def scoreboard(ctx):
 
-    
+
     # Opening JSON file
     f = open('db.json')
     
@@ -244,4 +254,4 @@ async def tonkar(ctx):
 
 
  
-client.run('place_client_id')  
+client.run('place_client_id_here')  
