@@ -80,18 +80,26 @@ async def on_ready():
 async def goated(ctx):
     global the_current_time
 
-    a=time.time()
 
-    change = a-the_current_time
-    
-    the_current_time = a
 
     role_name ='goated'
+    alrdy_goated=0
     member = discord.utils.get(ctx.guild.roles,name=role_name)
     async for user in ctx.guild.fetch_members(limit=None):
         if member in user.roles:
+
+            if user.id == ctx.author.id:
+                await ctx.send(f'{user.mention} you are already goated :goat:')
+                alrdy_goated=1
+                break
+            a=time.time()
+
+            change = a-the_current_time
+            
+            the_current_time = a
             member = discord.utils.get(ctx.guild.roles,name=role_name)
             changef=datetime.timedelta(seconds=int(change))
+
             await ctx.send(f'{user} was goated for {changef}')
             await user.remove_roles(member)
             sid=ctx.message.guild.id
@@ -119,16 +127,20 @@ async def goated(ctx):
             write_json(data_all)
             break
 
-
-    user2 = ctx.author
-    await ctx.send(f'{user2.mention} is now the goat :goat:')
-    role = discord.utils.get(user2.guild.roles,name=role_name)
-    await user2.add_roles(role)
+    if alrdy_goated==1:
+        pass
+    else:
+        user2 = ctx.author
+        await ctx.send(f'{user2.mention} is now the goat :goat:')
+        role = discord.utils.get(user2.guild.roles,name=role_name)
+        await user2.add_roles(role)
 
 
 
 @client.command()
 async def scoreboard(ctx):
+
+    
     # Opening JSON file
     f = open('db.json')
     
@@ -232,4 +244,4 @@ async def tonkar(ctx):
 
 
  
-client.run('place_client_id_here')  
+client.run('place_client_id')  
