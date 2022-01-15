@@ -192,6 +192,29 @@ async def scoreboard(ctx):
 
     await ctx.send(f'```{name0} is 1st with {time0}\n{name1} is 2nd with {time1}\n{name2} is 3rd with {time2}\n{name3} is 4th with {time3}\n{name4} is 5th with {time4}```')
 
+@client.command()
+async def gtime(ctx,member:discord.Member=None):
+    if member is None:
+        member = ctx.message.author
+    f = open('db.json')
+    
+    # returns JSON object as
+    # a dictionary
+    _data = json.load(f)
+    f.close()
+    indexs=get_sid(ctx)
+    temp = _data["serverid"][indexs]["user"]
+    flag = 0
+    for i in range(len(temp)):
+        if member.id == temp[i]["id"]:
+            flag=1
+            tt =  datetime.timedelta(seconds=int(temp[i]["seconds"]))
+            await ctx.send(f'{member.mention} has been goated for {tt} seconds.')
+            
+    if flag == 0:
+        await ctx.send(f'{member.mention} has never been goated! They ain''t pushin :regional_indicator_p: ')
+
+
 
     
 #pagman command
@@ -217,7 +240,7 @@ async def pick(ctx):
 #commands
 @client.command()
 async def command(ctx):
-    await ctx.send("```!tonka -> change your name to TONKAAA \n!tonkar -> revert your nickname \n!goated -> remove the goated role from the last user and gives it to you \n!scoreboard -> shows top 5 goats \n!pick -> randomly selects a user to pick a game```")
+    await ctx.send("```!tonka -> change your name to TONKAAA \n!tonkar -> revert your nickname \n!goated -> remove the goated role from the last user and gives it to you \n!scoreboard -> shows top 5 goats \n!gtime @user -> displays the user's total goated time \n!pick -> randomly selects a user to pick a game```")
 
 @client.command()
 async def tonka(ctx):
@@ -261,4 +284,4 @@ async def tonkar(ctx):
 
 
  
-client.run('place_client_id')  
+client.run('place_client_id_here')  
